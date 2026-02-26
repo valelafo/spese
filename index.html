@@ -1,100 +1,190 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archivio Spese Multi-Anno</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Budget Mobile</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #16a085; --info: #2980b9; --danger: #c0392b; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 15px; margin: 0; }
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        :root { --primary: #1a1a1a; --accent: #007bff; --success: #28a745; --bg: #f0f2f5; --card-bg: #ffffff; }
         
-        .year-selector { background: var(--primary); color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
-        .year-selector select { width: auto; background: white; color: var(--primary); font-weight: bold; padding: 5px 15px; cursor: pointer; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg); 
+            margin: 0; padding: 10px; 
+            color: var(--primary);
+        }
 
-        .input-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 4px; font-weight: bold; color: #666; font-size: 13px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; }
-        
-        button { width: 100%; padding: 15px; background: var(--info); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 5px; }
-        
-        .avg-section { background: #e8f8f5; padding: 15px; border-radius: 12px; margin: 20px 0; border: 2px solid var(--accent); text-align: center; }
-        .avg-section h3 { margin: 0; font-size: 14px; color: var(--accent); text-transform: uppercase; }
-        .avg-value { font-size: 32px; font-weight: bold; color: var(--accent); margin: 5px 0; }
-        .total-year { font-size: 14px; color: #16a085; font-weight: bold; }
+        .container { max-width: 500px; margin: 0 auto; }
 
-        .history { max-height: 200px; overflow-y: auto; background: #fafafa; border-radius: 10px; padding: 5px; margin-top: 15px; border: 1px solid #eee; }
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
-        .item-info { display: flex; flex-direction: column; }
-        .item-cat { font-size: 9px; color: var(--info); font-weight: bold; text-transform: uppercase; }
-        .btn-del { background: #fee; color: var(--danger); border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+        /* Card Anno - Più visibile */
+        .year-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .year-header select {
+            background: white;
+            font-size: 18px;
+            padding: 8px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            margin-top: 10px;
+            width: 80%;
+        }
+
+        /* Sezione Input */
+        .form-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #666; }
+        
+        input, select {
+            width: 100%;
+            height: 48px; /* Altezza ottimale per touch */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px; /* Evita lo zoom automatico su iPhone */
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+        }
+
+        button {
+            width: 100%;
+            height: 54px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        button:active { transform: scale(0.98); }
+
+        /* Box Media - Molto evidente */
+        .stats-card {
+            background: #e7f3ff;
+            border: 2px solid var(--accent);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .avg-label { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: bold; }
+        .avg-value { font-size: 36px; font-weight: 800; margin: 5px 0; color: var(--primary); }
+        .total-label { font-size: 14px; color: #555; }
+
+        /* Lista Storico */
+        .history-section { margin-top: 20px; }
+        .item-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid var(--accent);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .item-info div:first-child { font-weight: bold; font-size: 15px; }
+        .item-info div:last-child { font-size: 12px; color: #888; margin-top: 3px; }
+        
+        .item-price { text-align: right; }
+        .price { font-weight: 800; font-size: 16px; display: block; }
+        .btn-del {
+            color: #ff4d4d;
+            background: #fff0f0;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 8px;
+            margin-top: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="year-selector">
-        <span>Stai visualizzando l'anno: </span>
+<div class="container">
+    <div class="year-header">
+        <div>ANNO DI RIFERIMENTO</div>
         <select id="filter-year" onchange="update()">
             <option value="2025">2025</option>
-            <option value="2026">2026</option>
+            <option value="2026" selected>2026</option>
             <option value="2027">2027</option>
         </select>
     </div>
 
-    <div class="input-group">
-        <label>Descrizione</label>
-        <input type="text" id="desc" placeholder="Esempio: Spesa settimanale">
+    <div class="form-card">
+        <div class="input-group">
+            <label>Cosa hai comprato?</label>
+            <input type="text" id="desc" placeholder="es. Spesa Esselunga">
+        </div>
+        
+        <div class="input-group">
+            <label>Categoria</label>
+            <select id="cat">
+                <option value="Viaggi">✈️ Viaggi</option>
+                <option value="Svago">🍿 Svago</option>
+                <option value="Casalinghi">🏠 Casalinghi</option>
+                <option value="Oggetti">📦 Oggetti</option>
+                <option value="Veicoli">🚗 Veicoli</option>
+                <option value="Investimenti">📈 Investimenti</option>
+            </select>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <div class="input-group" style="flex: 2;">
+                <label>Importo (€)</label>
+                <input type="number" id="val" step="0.01" placeholder="0.00">
+            </div>
+            <div class="input-group" style="flex: 2;">
+                <label>Data</label>
+                <input type="date" id="data-input">
+            </div>
+        </div>
+
+        <button onclick="add()">REGISTRA ORA</button>
     </div>
 
-    <div class="input-group">
-        <label>Categoria</label>
-        <select id="cat">
-            <option value="Viaggi">✈️ Viaggi</option>
-            <option value="Svago">🍿 Svago</option>
-            <option value="Casalinghi">🏠 Casalinghi</option>
-            <option value="Oggetti">📦 Oggetti</option>
-            <option value="Veicoli">🚗 Veicoli</option>
-            <option value="Investimenti">📈 Investimenti</option>
-        </select>
-    </div>
-
-    <div class="input-group">
-        <label>Importo (€)</label>
-        <input type="number" id="val" step="0.01" placeholder="0.00">
-    </div>
-
-    <div class="input-group">
-        <label>Data</label>
-        <input type="date" id="data-input">
-    </div>
-
-    <button onclick="add()">Registra Spesa</button>
-
-    <div class="avg-section">
-        <h3 id="avg-title">Media Mensile 2025</h3>
+    <div class="stats-card">
+        <div class="avg-label">Media Mensile 1/12</div>
         <div class="avg-value" id="avg-total">€0.00</div>
-        <div class="total-year">Totale <span id="current-year-label">2025</span>: <span id="y-total">€0.00</span></div>
+        <div class="total-label">Totale Anno: <span id="y-total" style="font-weight: bold;">€0.00</span></div>
     </div>
 
-    <div class="history" id="history"></div>
+    <div class="history-section" id="history">
+        </div>
 </div>
 
 <script>
-    // Database unico per tutti gli anni
-    let spese = JSON.parse(localStorage.getItem('registro_multianno_v1')) || [];
-    
-    // Imposta la data di oggi nel selettore all'avvio
+    let spese = JSON.parse(localStorage.getItem('registro_mobile_v1')) || [];
     document.getElementById('data-input').valueAsDate = new Date();
 
     function update() {
         const selectedYear = parseInt(document.getElementById('filter-year').value);
         const hist = document.getElementById('history');
         hist.innerHTML = '';
-        
         let totaleAnno = 0;
 
-        // Filtra e visualizza solo le spese dell'anno selezionato
         spese.slice().reverse().forEach((item, index) => {
             const dataSpesa = new Date(item.data);
             if(dataSpesa.getFullYear() === selectedYear) {
@@ -103,28 +193,22 @@
 
                 const realIndex = spese.length - 1 - index;
                 hist.innerHTML += `
-                    <div class="item">
+                    <div class="item-card">
                         <div class="item-info">
-                            <span class="item-cat">${item.c}</span>
-                            <span style="font-size:14px;">${item.d}</span>
-                            <small>${dataSpesa.toLocaleDateString('it-IT')}</small>
+                            <div>${item.d}</div>
+                            <div>${item.c} • ${dataSpesa.toLocaleDateString('it-IT')}</div>
                         </div>
-                        <div>
-                            <span style="font-weight:bold; margin-right:10px;">€${importo.toFixed(2)}</span>
-                            <button class="btn-del" onclick="del(${realIndex})">X</button>
+                        <div class="item-price">
+                            <span class="price">€${importo.toFixed(2)}</span>
+                            <button class="btn-del" onclick="del(${realIndex})">Elimina</button>
                         </div>
                     </div>`;
             }
         });
 
-        const mediaFissa = totaleAnno / 12;
-
-        document.getElementById('avg-title').innerText = "Media Mensile " + selectedYear;
-        document.getElementById('current-year-label').innerText = selectedYear;
         document.getElementById('y-total').innerText = '€' + totaleAnno.toFixed(2);
-        document.getElementById('avg-total').innerText = '€' + mediaFissa.toFixed(2);
-        
-        localStorage.setItem('registro_multianno_v1', JSON.stringify(spese));
+        document.getElementById('avg-total').innerText = '€' + (totaleAnno / 12).toFixed(2);
+        localStorage.setItem('registro_mobile_v1', JSON.stringify(spese));
     }
 
     function add() {
@@ -138,11 +222,12 @@
             document.getElementById('desc').value = '';
             document.getElementById('val').value = '';
             update();
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
     }
 
     function del(i) {
-        if(confirm("Eliminare questa voce?")) {
+        if(confirm("Eliminare questa spesa?")) {
             spese.splice(i, 1);
             update();
         }
@@ -153,96 +238,3 @@
 
 </body>
 </html>
-            <small>Mese Corrente</small>
-            <div id="m-total">€0.00</div>
-        </div>
-        <div class="stat-box">
-            <small>Totale Anno</small>
-            <div id="y-total">€0.00</div>
-        </div>
-    </div>
-
-    <div class="avg-section">
-        <h3>📊 IMPATTO MENSILE (1/12)</h3>
-        <div class="avg-value" id="avg-total">€0.00</div>
-        <p style="font-size: 10px; text-align: center; color: #8e44ad; margin: 5px 0 0 0;">Spesa spalmata sull'intero anno</p>
-    </div>
-
-    <div style="font-size: 14px; font-weight: bold; color: #7f8c8d;">Ultime voci registrate:</div>
-    <div class="history" id="history"></div>
-</div>
-
-<script>
-    let spese = JSON.parse(localStorage.getItem('registro_spese_v6')) || [];
-
-    function update() {
-        const hist = document.getElementById('history');
-        hist.innerHTML = '';
-        
-        const oggi = new Date();
-        const meseCorrente = oggi.getMonth();
-        const annoCorrente = oggi.getFullYear();
-
-        let totaleMeseAttuale = 0;
-        let totaleAnnoCorrente = 0;
-
-        spese.slice().reverse().forEach((item, index) => {
-            const dataSpesa = new Date(item.data);
-            const importo = parseFloat(item.v);
-
-            if(dataSpesa.getMonth() === meseCorrente && dataSpesa.getFullYear() === annoCorrente) {
-                totaleMeseAttuale += importo;
-            }
-
-            if(dataSpesa.getFullYear() === annoCorrente) {
-                totaleAnnoCorrente += importo;
-            }
-
-            const realIndex = spese.length - 1 - index;
-            hist.innerHTML += `
-                <div class="item">
-                    <div class="item-info">
-                        <span class="item-cat">${item.c}</span>
-                        <span style="font-size:14px;">${item.d}</span>
-                    </div>
-                    <div>
-                        <span style="font-weight:bold; margin-right:10px;">€${importo.toFixed(2)}</span>
-                        <button class="btn-del" onclick="del(${realIndex})">X</button>
-                    </div>
-                </div>`;
-        });
-
-        const mediaFissa = totaleAnnoCorrente / 12;
-
-        document.getElementById('m-total').innerText = '€' + totaleMeseAttuale.toFixed(2);
-        document.getElementById('y-total').innerText = '€' + totaleAnnoCorrente.toFixed(2);
-        document.getElementById('avg-total').innerText = '€' + mediaFissa.toFixed(2);
-        
-        localStorage.setItem('registro_spese_v6', JSON.stringify(spese));
-    }
-
-    function add() {
-        const d = document.getElementById('desc').value;
-        const c = document.getElementById('cat').value;
-        const v = document.getElementById('val').value;
-        if(d && v) {
-            spese.push({ d, c, v, data: new Date().toISOString() });
-            document.getElementById('desc').value = '';
-            document.getElementById('val').value = '';
-            update();
-        }
-    }
-
-    function del(i) {
-        if(confirm("Vuoi eliminare questa voce dal registro?")) {
-            spese.splice(i, 1);
-            update();
-        }
-    }
-
-    update();
-</script>
-
-</body>
-</html>
-
