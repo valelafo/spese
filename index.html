@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestore Spese 2026</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
+        .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background: #28a745; color: white; border: none; cursor: pointer; }
+        .report { margin-top: 20px; padding-top: 20px; border-top: 2px solid #eee; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Tracciatore Spese</h2>
+    <input type="text" id="descrizione" placeholder="Cosa hai comprato?">
+    <input type="number" id="importo" placeholder="Quanto hai speso? (€)">
+    <button onclick="aggiungiSpesa()">Aggiungi Spesa</button>
+
+    <div class="report">
+        <p>Totale Mensile: <strong>€<span id="totMensile">0</span></strong></p>
+        <p>Proiezione Annuale: <strong>€<span id="totAnnuale">0</span></strong></p>
+    </div>
+</div>
+
+<script>
+    let spese = JSON.parse(localStorage.getItem('mieSpese')) || [];
+
+    function aggiornaCalcoli() {
+        let totale = spese.reduce((acc, spesa) => acc + parseFloat(spesa.importo), 0);
+        document.getElementById('totMensile').innerText = totale.toFixed(2);
+        document.getElementById('totAnnuale').innerText = (totale * 12).toFixed(2);
+        localStorage.setItem('mieSpese', JSON.stringify(spese));
+    }
+
+    function aggiungiSpesa() {
+        const desc = document.getElementById('descrizione').value;
+        const imp = document.getElementById('importo').value;
+        if(desc && imp) {
+            spese.push({ descrizione: desc, importo: imp });
+            aggiornaCalcoli();
+            document.getElementById('descrizione').value = '';
+            document.getElementById('importo').value = '';
+        }
+    }
+    
+    // Carica i dati all'avvio
+    aggiornaCalcoli();
+</script>
+
+</body>
+</html>
