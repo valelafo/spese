@@ -21,7 +21,6 @@
         .stat-box small { font-size: 10px; color: #95a5a6; text-transform: uppercase; }
         .stat-box div { font-size: 16px; font-weight: bold; color: var(--primary); margin-top: 5px; }
 
-        /* SEZIONE MEDIA FISSA 1/12 */
         .avg-section { background: #f4ecf7; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 2px solid var(--accent); }
         .avg-section h3 { margin: 0; font-size: 14px; color: var(--accent); text-align: center; text-transform: uppercase; }
         .avg-value { font-size: 28px; text-align: center; font-weight: bold; color: var(--accent); }
@@ -40,7 +39,7 @@
     
     <div class="input-group">
         <label>Descrizione</label>
-        <input type="text" id="desc" placeholder="es. Nuovo Computer">
+        <input type="text" id="desc" placeholder="es. Assicurazione Auto">
     </div>
 
     <div class="input-group">
@@ -50,6 +49,7 @@
             <option value="Svago">🍿 Svago</option>
             <option value="Casalinghi">🏠 Casalinghi</option>
             <option value="Oggetti">📦 Oggetti</option>
+            <option value="Veicoli">🚗 Veicoli</option>
         </select>
     </div>
 
@@ -82,7 +82,7 @@
 </div>
 
 <script>
-    let spese = JSON.parse(localStorage.getItem('registro_spese_v4')) || [];
+    let spese = JSON.parse(localStorage.getItem('registro_spese_v5')) || [];
 
     function update() {
         const hist = document.getElementById('history');
@@ -121,14 +121,13 @@
                 </div>`;
         });
 
-        // FORMULA RICHIESTA: Totale anno diviso 12 fisso
         const mediaFissa = totaleAnnoCorrente / 12;
 
         document.getElementById('m-total').innerText = '€' + totaleMeseAttuale.toFixed(2);
         document.getElementById('y-total').innerText = '€' + totaleAnnoCorrente.toFixed(2);
         document.getElementById('avg-total').innerText = '€' + mediaFissa.toFixed(2);
         
-        localStorage.setItem('registro_spese_v4', JSON.stringify(spese));
+        localStorage.setItem('registro_spese_v5', JSON.stringify(spese));
     }
 
     function add() {
