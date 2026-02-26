@@ -3,40 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Spese Reali</title>
+    <title>Analisi Spese Reali</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #3498db; --danger: #e74c3c; --bg: #ecf0f1; }
-        body { font-family: 'Helvetica Neue', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 15px; margin: 0; }
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
+        :root { --primary: #2c3e50; --accent: #27ae60; --info: #2980b9; --danger: #e74c3c; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 15px; margin: 0; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 22px; }
         
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 4px; font-weight: bold; color: #666; font-size: 13px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; }
+        input:focus { border-color: var(--info); }
         
-        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
         
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .stat-box { background: #f8f9fa; padding: 15px; border-radius: 12px; text-align: center; border-left: 4px solid var(--accent); }
-        .stat-box small { font-size: 11px; color: #7f8c8d; text-transform: uppercase; }
-        .stat-box div { font-size: 18px; font-weight: bold; color: var(--primary); }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .stat-box { background: #fff; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .stat-box.highlight { border-bottom: 4px solid var(--info); }
+        .stat-box small { font-size: 10px; color: #95a5a6; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-box div { font-size: 16px; font-weight: bold; color: var(--primary); margin-top: 5px; }
 
-        .history-title { font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid var(--bg); padding-bottom: 5px; }
-        .history { max-height: 250px; overflow-y: auto; }
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: #fff; }
+        .avg-section { background: #ebf5fb; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed var(--info); }
+        .avg-section h3 { margin: 0; font-size: 14px; color: var(--info); text-align: center; }
+        .avg-value { font-size: 24px; text-align: center; font-weight: bold; color: var(--info); }
+
+        .history-title { font-weight: bold; margin-bottom: 10px; color: #7f8c8d; font-size: 14px; display: flex; justify-content: space-between; }
+        .history { max-height: 200px; overflow-y: auto; background: #fafafa; border-radius: 10px; padding: 5px; }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
         .item-info { display: flex; flex-direction: column; }
-        .item-cat { font-size: 10px; color: var(--accent); font-weight: bold; text-transform: uppercase; }
-        .btn-del { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 5px; width: auto; font-size: 12px; margin: 0; }
+        .item-cat { font-size: 9px; color: var(--info); font-weight: bold; text-transform: uppercase; }
+        .item-name { font-size: 14px; color: #333; }
+        .btn-del { background: #ffeeee; color: var(--danger); border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>📊 Registro Spese</h2>
+    <h2>📓 Gestore Spese Reali</h2>
     
     <div class="input-group">
-        <label>Descrizione</label>
-        <input type="text" id="desc" placeholder="Esempio: Volo Parigi">
+        <label>Cosa hai acquistato?</label>
+        <input type="text" id="desc" placeholder="es. Volo per Londra">
     </div>
 
     <div class="input-group">
@@ -51,29 +58,37 @@
 
     <div class="input-group">
         <label>Importo (€)</label>
-        <input type="number" id="val" placeholder="0.00">
+        <input type="number" id="val" step="0.01" placeholder="0.00">
     </div>
 
-    <button onclick="add()">Registra Spesa</button>
+    <button onclick="add()">Aggiungi al Registro</button>
 
-    <div class="stats">
+    <div class="stats-grid">
         <div class="stat-box">
-            <small>Totale Mensile</small>
-            <div id="m-total">€0</div>
+            <small>Speso questo Mese</small>
+            <div id="m-total">€0.00</div>
         </div>
         <div class="stat-box">
-            <small>Totale Annuale</small>
-            <div id="y-total">€0</div>
+            <small>Speso quest'Anno</small>
+            <div id="y-total">€0.00</div>
         </div>
     </div>
 
-    <div class="history-title">Ultime Spese</div>
+    <div class="avg-section">
+        <h3>📊 MEDIA SPESA MENSILE</h3>
+        <div class="avg-value" id="avg-total">€0.00</div>
+        <p style="font-size: 10px; text-align: center; color: #5dade2; margin: 5px 0 0 0;">(Basata sul totale annuo spalmato sui mesi trascorsi)</p>
+    </div>
+
+    <div class="history-title">
+        <span>Cronologia</span>
+        <span id="items-count" style="font-weight: normal; font-size: 12px;">0 voci</span>
+    </div>
     <div class="history" id="history"></div>
 </div>
 
 <script>
-    // Recuperiamo i dati salvati e la data attuale
-    let spese = JSON.parse(localStorage.getItem('registro_spese_2026')) || [];
+    let spese = JSON.parse(localStorage.getItem('registro_spese_v3')) || [];
 
     function update() {
         const hist = document.getElementById('history');
@@ -82,32 +97,33 @@
         const oggi = new Date();
         const meseCorrente = oggi.getMonth();
         const annoCorrente = oggi.getFullYear();
+        
+        // Quanti mesi sono passati dall'inizio dell'anno (incluso quello attuale)
+        const mesiTrascorsi = meseCorrente + 1;
 
-        let totaleMese = 0;
-        let totaleAnno = 0;
+        let totaleMeseAttuale = 0;
+        let totaleAnnoCorrente = 0;
 
-        // Ordiniamo le spese dalla più recente alla più vecchia
         spese.slice().reverse().forEach((item, index) => {
             const dataSpesa = new Date(item.data);
             const importo = parseFloat(item.v);
 
-            // Calcolo Mensile (solo se mese e anno coincidono con oggi)
+            // Somma solo se è il mese e anno attuale
             if(dataSpesa.getMonth() === meseCorrente && dataSpesa.getFullYear() === annoCorrente) {
-                totaleMese += importo;
+                totaleMeseAttuale += importo;
             }
 
-            // Calcolo Annuale (tutto quello che appartiene a quest'anno)
+            // Somma tutto ciò che appartiene a quest'anno
             if(dataSpesa.getFullYear() === annoCorrente) {
-                totaleAnno += importo;
+                totaleAnnoCorrente += importo;
             }
 
-            // Visualizzazione lista (usiamo index reale per cancellare)
             const realIndex = spese.length - 1 - index;
             hist.innerHTML += `
                 <div class="item">
                     <div class="item-info">
                         <span class="item-cat">${item.c}</span>
-                        <span>${item.d}</span>
+                        <span class="item-name">${item.d}</span>
                     </div>
                     <div>
                         <span style="font-weight:bold; margin-right:10px;">€${importo.toFixed(2)}</span>
@@ -116,9 +132,15 @@
                 </div>`;
         });
 
-        document.getElementById('m-total').innerText = '€' + totaleMese.toFixed(2);
-        document.getElementById('y-total').innerText = '€' + totaleAnno.toFixed(2);
-        localStorage.setItem('registro_spese_2026', JSON.stringify(spese));
+        // CALCOLO MEDIA: Totale anno diviso i mesi trascorsi
+        const mediaMensile = totaleAnnoCorrente / mesiTrascorsi;
+
+        document.getElementById('m-total').innerText = '€' + totaleMeseAttuale.toFixed(2);
+        document.getElementById('y-total').innerText = '€' + totaleAnnoCorrente.toFixed(2);
+        document.getElementById('avg-total').innerText = '€' + mediaMensile.toFixed(2);
+        document.getElementById('items-count').innerText = spese.length + ' voci';
+        
+        localStorage.setItem('registro_spese_v3', JSON.stringify(spese));
     }
 
     function add() {
@@ -131,7 +153,7 @@
                 d: d,
                 c: c,
                 v: v,
-                data: new Date().toISOString() // Salviamo il momento esatto dell'acquisto
+                data: new Date().toISOString()
             });
             
             document.getElementById('desc').value = '';
@@ -141,13 +163,12 @@
     }
 
     function del(i) {
-        if(confirm("Vuoi eliminare questa spesa?")) {
+        if(confirm("Eliminare questa voce?")) {
             spese.splice(i, 1);
             update();
         }
     }
 
-    // Avvio iniziale
     update();
 </script>
 
