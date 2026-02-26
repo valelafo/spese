@@ -3,47 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisi Spese Reali</title>
+    <title>Analisi Spese 1/12</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #27ae60; --info: #2980b9; --danger: #e74c3c; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 15px; margin: 0; }
+        :root { --primary: #2c3e50; --accent: #8e44ad; --info: #2980b9; --danger: #c0392b; --bg: #f8f9fa; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 15px; margin: 0; }
         .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        h2 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 22px; }
+        h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
         
         .input-group { margin-bottom: 12px; }
         label { display: block; margin-bottom: 4px; font-weight: bold; color: #666; font-size: 13px; }
         input, select { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; }
-        input:focus { border-color: var(--info); }
         
         button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
-        .stat-box { background: #fff; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .stat-box.highlight { border-bottom: 4px solid var(--info); }
-        .stat-box small { font-size: 10px; color: #95a5a6; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-box { background: #fff; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #eee; }
+        .stat-box small { font-size: 10px; color: #95a5a6; text-transform: uppercase; }
         .stat-box div { font-size: 16px; font-weight: bold; color: var(--primary); margin-top: 5px; }
 
-        .avg-section { background: #ebf5fb; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed var(--info); }
-        .avg-section h3 { margin: 0; font-size: 14px; color: var(--info); text-align: center; }
-        .avg-value { font-size: 24px; text-align: center; font-weight: bold; color: var(--info); }
+        /* SEZIONE MEDIA FISSA 1/12 */
+        .avg-section { background: #f4ecf7; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 2px solid var(--accent); }
+        .avg-section h3 { margin: 0; font-size: 14px; color: var(--accent); text-align: center; text-transform: uppercase; }
+        .avg-value { font-size: 28px; text-align: center; font-weight: bold; color: var(--accent); }
 
-        .history-title { font-weight: bold; margin-bottom: 10px; color: #7f8c8d; font-size: 14px; display: flex; justify-content: space-between; }
-        .history { max-height: 200px; overflow-y: auto; background: #fafafa; border-radius: 10px; padding: 5px; }
+        .history { max-height: 200px; overflow-y: auto; background: #fafafa; border-radius: 10px; padding: 5px; margin-top: 10px; }
         .item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
         .item-info { display: flex; flex-direction: column; }
-        .item-cat { font-size: 9px; color: var(--info); font-weight: bold; text-transform: uppercase; }
-        .item-name { font-size: 14px; color: #333; }
-        .btn-del { background: #ffeeee; color: var(--danger); border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .item-cat { font-size: 9px; color: var(--accent); font-weight: bold; text-transform: uppercase; }
+        .btn-del { background: #fee; color: var(--danger); border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>📓 Gestore Spese Reali</h2>
+    <h2>📓 Registro Spese Reali</h2>
     
     <div class="input-group">
-        <label>Cosa hai acquistato?</label>
-        <input type="text" id="desc" placeholder="es. Volo per Londra">
+        <label>Descrizione</label>
+        <input type="text" id="desc" placeholder="es. Nuovo Computer">
     </div>
 
     <div class="input-group">
@@ -61,34 +58,31 @@
         <input type="number" id="val" step="0.01" placeholder="0.00">
     </div>
 
-    <button onclick="add()">Aggiungi al Registro</button>
+    <button onclick="add()">Registra Spesa</button>
 
     <div class="stats-grid">
         <div class="stat-box">
-            <small>Speso questo Mese</small>
+            <small>Spesa Mese Corrente</small>
             <div id="m-total">€0.00</div>
         </div>
         <div class="stat-box">
-            <small>Speso quest'Anno</small>
+            <small>Spesa Totale Anno</small>
             <div id="y-total">€0.00</div>
         </div>
     </div>
 
     <div class="avg-section">
-        <h3>📊 MEDIA SPESA MENSILE</h3>
+        <h3>📊 IMPATTO MENSILE (1/12)</h3>
         <div class="avg-value" id="avg-total">€0.00</div>
-        <p style="font-size: 10px; text-align: center; color: #5dade2; margin: 5px 0 0 0;">(Basata sul totale annuo spalmato sui mesi trascorsi)</p>
+        <p style="font-size: 10px; text-align: center; color: #8e44ad; margin: 5px 0 0 0;">Calcolato su scala annuale fissa</p>
     </div>
 
-    <div class="history-title">
-        <span>Cronologia</span>
-        <span id="items-count" style="font-weight: normal; font-size: 12px;">0 voci</span>
-    </div>
+    <div style="font-size: 14px; font-weight: bold; color: #7f8c8d;">Ultime voci:</div>
     <div class="history" id="history"></div>
 </div>
 
 <script>
-    let spese = JSON.parse(localStorage.getItem('registro_spese_v3')) || [];
+    let spese = JSON.parse(localStorage.getItem('registro_spese_v4')) || [];
 
     function update() {
         const hist = document.getElementById('history');
@@ -97,9 +91,6 @@
         const oggi = new Date();
         const meseCorrente = oggi.getMonth();
         const annoCorrente = oggi.getFullYear();
-        
-        // Quanti mesi sono passati dall'inizio dell'anno (incluso quello attuale)
-        const mesiTrascorsi = meseCorrente + 1;
 
         let totaleMeseAttuale = 0;
         let totaleAnnoCorrente = 0;
@@ -108,12 +99,10 @@
             const dataSpesa = new Date(item.data);
             const importo = parseFloat(item.v);
 
-            // Somma solo se è il mese e anno attuale
             if(dataSpesa.getMonth() === meseCorrente && dataSpesa.getFullYear() === annoCorrente) {
                 totaleMeseAttuale += importo;
             }
 
-            // Somma tutto ciò che appartiene a quest'anno
             if(dataSpesa.getFullYear() === annoCorrente) {
                 totaleAnnoCorrente += importo;
             }
@@ -123,7 +112,7 @@
                 <div class="item">
                     <div class="item-info">
                         <span class="item-cat">${item.c}</span>
-                        <span class="item-name">${item.d}</span>
+                        <span style="font-size:14px;">${item.d}</span>
                     </div>
                     <div>
                         <span style="font-weight:bold; margin-right:10px;">€${importo.toFixed(2)}</span>
@@ -132,30 +121,22 @@
                 </div>`;
         });
 
-        // CALCOLO MEDIA: Totale anno diviso i mesi trascorsi
-        const mediaMensile = totaleAnnoCorrente / mesiTrascorsi;
+        // FORMULA RICHIESTA: Totale anno diviso 12 fisso
+        const mediaFissa = totaleAnnoCorrente / 12;
 
         document.getElementById('m-total').innerText = '€' + totaleMeseAttuale.toFixed(2);
         document.getElementById('y-total').innerText = '€' + totaleAnnoCorrente.toFixed(2);
-        document.getElementById('avg-total').innerText = '€' + mediaMensile.toFixed(2);
-        document.getElementById('items-count').innerText = spese.length + ' voci';
+        document.getElementById('avg-total').innerText = '€' + mediaFissa.toFixed(2);
         
-        localStorage.setItem('registro_spese_v3', JSON.stringify(spese));
+        localStorage.setItem('registro_spese_v4', JSON.stringify(spese));
     }
 
     function add() {
         const d = document.getElementById('desc').value;
         const c = document.getElementById('cat').value;
         const v = document.getElementById('val').value;
-        
         if(d && v) {
-            spese.push({
-                d: d,
-                c: c,
-                v: v,
-                data: new Date().toISOString()
-            });
-            
+            spese.push({ d, c, v, data: new Date().toISOString() });
             document.getElementById('desc').value = '';
             document.getElementById('val').value = '';
             update();
@@ -163,7 +144,7 @@
     }
 
     function del(i) {
-        if(confirm("Eliminare questa voce?")) {
+        if(confirm("Eliminare questa spesa?")) {
             spese.splice(i, 1);
             update();
         }
