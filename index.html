@@ -3,53 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestore Spese 2026</title>
+    <title>Registro Spese Reali</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
-        .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { background: #28a745; color: white; border: none; cursor: pointer; }
-        .report { margin-top: 20px; padding-top: 20px; border-top: 2px solid #eee; }
+        :root { --primary: #2c3e50; --accent: #3498db; --danger: #e74c3c; --bg: #ecf0f1; }
+        body { font-family: 'Helvetica Neue', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 15px; margin: 0; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
+        
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+        
+        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .stat-box { background: #f8f9fa; padding: 15px; border-radius: 12px; text-align: center; border-left: 4px solid var(--accent); }
+        .stat-box small { font-size: 11px; color: #7f8c8d; text-transform: uppercase; }
+        .stat-box div { font-size: 18px; font-weight: bold; color: var(--primary); }
+
+        .history-title { font-weight: bold; margin-bottom: 10px; border-bottom: 2px solid var(--bg); padding-bottom: 5px; }
+        .history { max-height: 250px; overflow-y: auto; }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: #fff; }
+        .item-info { display: flex; flex-direction: column; }
+        .item-cat { font-size: 10px; color: var(--accent); font-weight: bold; text-transform: uppercase; }
+        .btn-del { background: none; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; border-radius: 5px; width: auto; font-size: 12px; margin: 0; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Tracciatore Spese</h2>
-    <input type="text" id="descrizione" placeholder="Cosa hai comprato?">
-    <input type="number" id="importo" placeholder="Quanto hai speso? (€)">
-    <button onclick="aggiungiSpesa()">Aggiungi Spesa</button>
-
-    <div class="report">
-        <p>Totale Mensile: <strong>€<span id="totMensile">0</span></strong></p>
-        <p>Proiezione Annuale: <strong>€<span id="totAnnuale">0</span></strong></p>
+<div class="card">
+    <h2>📊 Registro Spese</h2>
+    
+    <div class="input-group">
+        <label>Descrizione</label>
+        <input type="text" id="desc" placeholder="Esempio: Volo Parigi">
     </div>
+
+    <div class="input-group">
+        <label>Categoria</label>
+        <select id="cat">
+            <option value="Viaggi">✈️ Viaggi</option>
+            <option value="Svago">🍿 Svago</option>
+            <option value="Casalinghi">🏠 Casalinghi</option>
+            <option value="Oggetti">📦 Oggetti</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label>Importo (€)</label>
+        <input type="number" id="val" placeholder="0.00">
+    </div>
+
+    <button onclick="add()">Registra Spesa</button>
+
+    <div class="stats">
+        <div class="stat-box">
+            <small>Totale Mensile</small>
+            <div id="m-total">€0</div>
+        </div>
+        <div class="stat-box">
+            <small>Totale Annuale</small>
+            <div id="y-total">€0</div>
+        </div>
+    </div>
+
+    <div class="history-title">Ultime Spese</div>
+    <div class="history" id="history"></div>
 </div>
 
 <script>
-    let spese = JSON.parse(localStorage.getItem('mieSpese')) || [];
+    // Recuperiamo i dati salvati e la data attuale
+    let spese = JSON.parse(localStorage.getItem('registro_spese_2026')) || [];
 
-    function aggiornaCalcoli() {
-        let totale = spese.reduce((acc, spesa) => acc + parseFloat(spesa.importo), 0);
-        document.getElementById('totMensile').innerText = totale.toFixed(2);
-        document.getElementById('totAnnuale').innerText = (totale * 12).toFixed(2);
-        localStorage.setItem('mieSpese', JSON.stringify(spese));
+    function update() {
+        const hist = document.getElementById('history');
+        hist.innerHTML = '';
+        
+        const oggi = new Date();
+        const meseCorrente = oggi.getMonth();
+        const annoCorrente = oggi.getFullYear();
+
+        let totaleMese = 0;
+        let totaleAnno = 0;
+
+        // Ordiniamo le spese dalla più recente alla più vecchia
+        spese.slice().reverse().forEach((item, index) => {
+            const dataSpesa = new Date(item.data);
+            const importo = parseFloat(item.v);
+
+            // Calcolo Mensile (solo se mese e anno coincidono con oggi)
+            if(dataSpesa.getMonth() === meseCorrente && dataSpesa.getFullYear() === annoCorrente) {
+                totaleMese += importo;
+            }
+
+            // Calcolo Annuale (tutto quello che appartiene a quest'anno)
+            if(dataSpesa.getFullYear() === annoCorrente) {
+                totaleAnno += importo;
+            }
+
+            // Visualizzazione lista (usiamo index reale per cancellare)
+            const realIndex = spese.length - 1 - index;
+            hist.innerHTML += `
+                <div class="item">
+                    <div class="item-info">
+                        <span class="item-cat">${item.c}</span>
+                        <span>${item.d}</span>
+                    </div>
+                    <div>
+                        <span style="font-weight:bold; margin-right:10px;">€${importo.toFixed(2)}</span>
+                        <button class="btn-del" onclick="del(${realIndex})">X</button>
+                    </div>
+                </div>`;
+        });
+
+        document.getElementById('m-total').innerText = '€' + totaleMese.toFixed(2);
+        document.getElementById('y-total').innerText = '€' + totaleAnno.toFixed(2);
+        localStorage.setItem('registro_spese_2026', JSON.stringify(spese));
     }
 
-    function aggiungiSpesa() {
-        const desc = document.getElementById('descrizione').value;
-        const imp = document.getElementById('importo').value;
-        if(desc && imp) {
-            spese.push({ descrizione: desc, importo: imp });
-            aggiornaCalcoli();
-            document.getElementById('descrizione').value = '';
-            document.getElementById('importo').value = '';
+    function add() {
+        const d = document.getElementById('desc').value;
+        const c = document.getElementById('cat').value;
+        const v = document.getElementById('val').value;
+        
+        if(d && v) {
+            spese.push({
+                d: d,
+                c: c,
+                v: v,
+                data: new Date().toISOString() // Salviamo il momento esatto dell'acquisto
+            });
+            
+            document.getElementById('desc').value = '';
+            document.getElementById('val').value = '';
+            update();
         }
     }
-    
-    // Carica i dati all'avvio
-    aggiornaCalcoli();
+
+    function del(i) {
+        if(confirm("Vuoi eliminare questa spesa?")) {
+            spese.splice(i, 1);
+            update();
+        }
+    }
+
+    // Avvio iniziale
+    update();
 </script>
 
 </body>
+</html>
 </html>
