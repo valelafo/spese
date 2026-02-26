@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisi Spese 1/12</title>
+    <title>Analisi Spese & Investimenti</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #8e44ad; --info: #2980b9; --danger: #c0392b; --bg: #f8f9fa; }
+        :root { --primary: #2c3e50; --accent: #8e44ad; --info: #2980b9; --danger: #c0392b; --bg: #f8f9fa; --success: #27ae60; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 15px; margin: 0; }
         .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
         h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
@@ -39,7 +39,7 @@
     
     <div class="input-group">
         <label>Descrizione</label>
-        <input type="text" id="desc" placeholder="es. Assicurazione Auto">
+        <input type="text" id="desc" placeholder="es. ETF World o Cena">
     </div>
 
     <div class="input-group">
@@ -50,6 +50,7 @@
             <option value="Casalinghi">🏠 Casalinghi</option>
             <option value="Oggetti">📦 Oggetti</option>
             <option value="Veicoli">🚗 Veicoli</option>
+            <option value="Investimenti">📈 Investimenti</option>
         </select>
     </div>
 
@@ -58,15 +59,15 @@
         <input type="number" id="val" step="0.01" placeholder="0.00">
     </div>
 
-    <button onclick="add()">Registra Spesa</button>
+    <button onclick="add()">Registra Voce</button>
 
     <div class="stats-grid">
         <div class="stat-box">
-            <small>Spesa Mese Corrente</small>
+            <small>Mese Corrente</small>
             <div id="m-total">€0.00</div>
         </div>
         <div class="stat-box">
-            <small>Spesa Totale Anno</small>
+            <small>Totale Anno</small>
             <div id="y-total">€0.00</div>
         </div>
     </div>
@@ -74,15 +75,15 @@
     <div class="avg-section">
         <h3>📊 IMPATTO MENSILE (1/12)</h3>
         <div class="avg-value" id="avg-total">€0.00</div>
-        <p style="font-size: 10px; text-align: center; color: #8e44ad; margin: 5px 0 0 0;">Calcolato su scala annuale fissa</p>
+        <p style="font-size: 10px; text-align: center; color: #8e44ad; margin: 5px 0 0 0;">Spesa spalmata sull'intero anno</p>
     </div>
 
-    <div style="font-size: 14px; font-weight: bold; color: #7f8c8d;">Ultime voci:</div>
+    <div style="font-size: 14px; font-weight: bold; color: #7f8c8d;">Ultime voci registrate:</div>
     <div class="history" id="history"></div>
 </div>
 
 <script>
-    let spese = JSON.parse(localStorage.getItem('registro_spese_v5')) || [];
+    let spese = JSON.parse(localStorage.getItem('registro_spese_v6')) || [];
 
     function update() {
         const hist = document.getElementById('history');
@@ -127,7 +128,7 @@
         document.getElementById('y-total').innerText = '€' + totaleAnnoCorrente.toFixed(2);
         document.getElementById('avg-total').innerText = '€' + mediaFissa.toFixed(2);
         
-        localStorage.setItem('registro_spese_v5', JSON.stringify(spese));
+        localStorage.setItem('registro_spese_v6', JSON.stringify(spese));
     }
 
     function add() {
@@ -143,7 +144,7 @@
     }
 
     function del(i) {
-        if(confirm("Eliminare questa spesa?")) {
+        if(confirm("Vuoi eliminare questa voce dal registro?")) {
             spese.splice(i, 1);
             update();
         }
